@@ -54,5 +54,5 @@ yarn dev
 ## Contact
 
 - **Email**: [thiiago.bruchmann@gmail.com](mailto:thiiago.bruchmann@gmail.com)
-- **LinkedIn**: [My LinkedIn Profile](https://www.linkedin.com/in/thiiagobruchmann)
+- **LinkedIn**: [My LinkedIn Profile](https://www.linkedin.com/in/thiagobruchmann)
 - **GitHub**: [My GitHub Profile](https://github.com/bThiiago)
