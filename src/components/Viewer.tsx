@@ -7,7 +7,7 @@ import {
   GridToolbarDensitySelector,
   GridToolbarExport,
 } from "@mui/x-data-grid";
-import { Box, Typography, useTheme } from "@mui/material";
+import { Box, useTheme } from "@mui/material";
 import { v4 as uuidv4 } from "uuid";
 import { Record } from "../types/models";
 
@@ -86,60 +86,44 @@ function Viewer() {
   ];
 
   return (
-    <Box m="1.5rem 2.5rem">
-      <Box>
-        <Typography
-          variant="h2"
-          color="primary"
-          fontWeight="bold"
-          sx={{ mb: "5px" }}
-        >
-          FMCSA Viewer
-        </Typography>
-        <Typography variant="h5" color="white">
-          Federal Motor Carrier Safety Administration
-        </Typography>
-      </Box>
-
-      <Box
-        mt="30px"
-        mb="30px"
-        sx={{
-          "& .MuiDataGrid-columnHeaders": {
-            backgroundColor: theme.palette.background.default,
-            color: "primary",
+    <Box
+      mt="30px"
+      mb="30px"
+      sx={{
+        "& .MuiDataGrid-columnHeaders": {
+          backgroundColor: theme.palette.background.default,
+          color: "primary",
+        },
+        "& .MuiDataGrid-virtualScroller": {
+          backgroundColor: theme.palette.primary.contrastText,
+        },
+        "& .MuiDataGrid-toolbarContainer": {
+          backgroundColor: theme.palette.primary.main,
+          "& .MuiButton-root": {
+            color: theme.palette.secondary.contrastText,
           },
-          "& .MuiDataGrid-virtualScroller": {
-            backgroundColor: theme.palette.primary.contrastText,
-          },
-          "& .MuiDataGrid-toolbarContainer": {
-            backgroundColor: theme.palette.primary.main,
-            "& .MuiButton-root": {
-              color: theme.palette.secondary.contrastText,
+        },
+        "& .MuiDataGrid-footerContainer": {
+          backgroundColor: theme.palette.background.default,
+        },
+      }}
+    >
+      <DataGrid
+        rows={records}
+        columns={columns}
+        loading={loading}
+        slots={{ toolbar: CustomToolbar }}
+        pagination
+        autoHeight
+        pageSizeOptions={[10, 25, 50, 100]}
+        initialState={{
+          pagination: {
+            paginationModel: {
+              pageSize: 10,
             },
-          },
-          "& .MuiDataGrid-footerContainer": {
-            backgroundColor: theme.palette.background.default,
           },
         }}
-      >
-        <DataGrid
-          rows={records}
-          columns={columns}
-          loading={loading}
-          slots={{ toolbar: CustomToolbar }}
-          pagination
-          autoHeight
-          pageSizeOptions={[10, 25, 50, 100]}
-          initialState={{
-            pagination: {
-              paginationModel: {
-                pageSize: 10,
-              },
-            },
-          }}
-        />
-      </Box>
+      />
     </Box>
   );
 }
