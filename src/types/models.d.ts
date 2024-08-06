@@ -1,4 +1,5 @@
 export interface Record {
+  [key: string]: string;
   created_dt: string;
   data_source_modified_dt: string;
   entity_type: string;
