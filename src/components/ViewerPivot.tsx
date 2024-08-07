@@ -7,6 +7,7 @@ import "react-pivottable/pivottable.css";
 import TableRenderers from "react-pivottable/TableRenderers";
 import Plot from "react-plotly.js";
 import createPlotlyRenderers from "react-pivottable/PlotlyRenderers";
+import { parse } from "papaparse";
 
 const PlotlyRenderers = createPlotlyRenderers(Plot);
 
@@ -22,35 +23,30 @@ function ViewerPivot() {
     fetch("/FMCSA_records.csv")
       .then((response) => response.text())
       .then((data) => {
-        const parsedData = parseCSVData(data);
+        const parsedData = parse(data, {
+          header: true,
+          skipEmptyLines: true,
+        }).data.map((row: any) => {
+          return {
+            created_dt: row["created_dt"],
+            data_source_modified_dt: row["data_source_modified_dt"],
+            entity_type: row["entity_type"],
+            operating_status: row["operating_status"],
+            legal_name: row["legal_name"],
+            dba_name: row["dba_name"],
+            physical_address: row["physical_address"],
+            phone: row["phone"],
+            usdot_number: row["usdot_number"],
+            mc_mx_ff_number: row["mc_mx_ff_number"],
+            power_units: row["power_units"],
+            out_of_service_date: row["out_of_service_date"],
+          };
+        });
+
         setRecords(parsedData);
       })
       .catch((error) => {
         console.error("Error fetching records:", error);
-      });
-  };
-
-  const parseCSVData = (data: string): Record[] => {
-    return data
-      .split("\n")
-      .slice(1)
-      .map((row) => {
-        const columns = row.split(",");
-
-        return {
-          "Created Date": columns[0],
-          "Modified Date": columns[1],
-          "Entity Type": columns[2],
-          "Operating Status": columns[3],
-          "Legal Name": columns[4],
-          "DBA Name": columns[5],
-          "Physical Address": columns[6],
-          Phone: columns[7],
-          "USDOT Number": columns[8],
-          "MC/MX/FF Number": columns[9],
-          "Power Units": columns[10],
-          "Out of Service Date": columns[11],
-        };
       });
   };
 

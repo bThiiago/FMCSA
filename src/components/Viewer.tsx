@@ -10,6 +10,7 @@ import {
 import { Box, useTheme } from "@mui/material";
 import { v4 as uuidv4 } from "uuid";
 import { Record } from "../types/models";
+import { parse } from "papaparse";
 
 function CustomToolbar() {
   return (
@@ -28,30 +29,34 @@ function Viewer() {
   const theme = useTheme();
 
   useEffect(() => {
+    fetchRecords();
+  }, []);
+
+  const fetchRecords = () => {
     fetch("/FMCSA_records.csv")
       .then((response) => response.text())
       .then((data) => {
-        const parsedData = data
-          .split("\n")
-          .slice(1)
-          .map((row) => {
-            const columns = row.split(",");
-            return {
-              id: uuidv4(),
-              created_dt: columns[0],
-              data_source_modified_dt: columns[1],
-              entity_type: columns[2],
-              operating_status: columns[3],
-              legal_name: columns[4],
-              dba_name: columns[5],
-              physical_address: columns[6],
-              phone: columns[7],
-              usdot_number: columns[8],
-              mc_mx_ff_number: columns[9],
-              power_units: columns[10],
-              out_of_service_date: columns[11],
-            };
-          });
+        const parsedData = parse(data, {
+          header: true,
+          skipEmptyLines: true,
+        }).data.map((row: any) => {
+          return {
+            id: uuidv4(),
+            created_dt: row["created_dt"],
+            data_source_modified_dt: row["data_source_modified_dt"],
+            entity_type: row["entity_type"],
+            operating_status: row["operating_status"],
+            legal_name: row["legal_name"],
+            dba_name: row["dba_name"],
+            physical_address: row["physical_address"],
+            phone: row["phone"],
+            usdot_number: row["usdot_number"],
+            mc_mx_ff_number: row["mc_mx_ff_number"],
+            power_units: row["power_units"],
+            out_of_service_date: row["out_of_service_date"],
+          };
+        });
+
         setRecords(parsedData);
       })
       .catch((error) => {
@@ -60,7 +65,7 @@ function Viewer() {
       .finally(() => {
         setLoading(false);
       });
-  }, []);
+  };
 
   const columns: GridColDef[] = [
     { field: "created_dt", headerName: "Created Date", width: 200 },
