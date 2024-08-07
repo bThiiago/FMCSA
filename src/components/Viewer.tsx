@@ -11,6 +11,7 @@ import { Box, useTheme } from "@mui/material";
 import { v4 as uuidv4 } from "uuid";
 import { Record } from "../types/models";
 import { parse } from "papaparse";
+import ViewerPivot from "./ViewerPivot";
 
 function CustomToolbar() {
   return (
@@ -129,6 +130,8 @@ function Viewer() {
           },
         }}
       />
+
+      <ViewerPivot records={records} />
     </Box>
   );
 }

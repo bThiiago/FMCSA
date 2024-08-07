@@ -1,6 +1,5 @@
 import { Box, Typography } from "@mui/material";
 import Viewer from "./components/Viewer";
-import ViewerPivot from "./components/ViewerPivot";
 
 function App() {
   return (
@@ -21,8 +20,6 @@ function App() {
         </Box>
 
         <Viewer />
-
-        <ViewerPivot />
       </Box>
     </>
   );
