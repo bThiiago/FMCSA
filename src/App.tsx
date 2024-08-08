@@ -1,5 +1,5 @@
 import { Box, Typography } from "@mui/material";
-import Viewer from "./components/Viewer";
+import Viewer from "./components/ViewerTable";
 
 function App() {
   return (

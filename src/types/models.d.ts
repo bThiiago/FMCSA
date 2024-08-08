@@ -1,4 +1,5 @@
 export interface Record {
+  [key: string]: string;
   created_dt: string;
   data_source_modified_dt: string;
   entity_type: string;
@@ -28,4 +29,10 @@ export interface Record {
   id: string;
   credit_score: string;
   record_status: string;
+}
+
+export interface Filter {
+  field: string;
+  operator: string;
+  value: string;
 }

@@ -7,18 +7,12 @@ import {
   GridToolbarDensitySelector,
   GridToolbarExport,
 } from "@mui/x-data-grid";
-import { Box, useTheme } from "@mui/material";
+import { Box, CircularProgress, useTheme } from "@mui/material";
 import { v4 as uuidv4 } from "uuid";
-import { Record } from "../types/models";
+import { Filter, Record } from "../types/models";
 import { parse } from "papaparse";
-
-import PivotTableUI from "react-pivottable/PivotTableUI";
-import "react-pivottable/pivottable.css";
-import TableRenderers from "react-pivottable/TableRenderers";
-import Plot from "react-plotly.js";
-import createPlotlyRenderers from "react-pivottable/PlotlyRenderers";
-
-const PlotlyRenderers = createPlotlyRenderers(Plot);
+import ViewerPivot from "./ViewerPivot";
+import ViewerChart from "./ViewerChart";
 
 function CustomToolbar() {
   return (
@@ -33,8 +27,7 @@ function CustomToolbar() {
 function Viewer() {
   const [records, setRecords] = useState<Record[]>([]);
   const [loading, setLoading] = useState(true);
-
-  const [pivotState, setPivotState] = useState<any>({});
+  const [filterModel, setFilterModel] = useState<Filter[]>([]);
 
   const theme = useTheme();
 
@@ -82,7 +75,6 @@ function Viewer() {
             record_status: row["record_status"],
           };
         });
-        console.log("parsedData", parsedData);
         setRecords(parsedData);
       })
       .catch((error) => {
@@ -91,6 +83,17 @@ function Viewer() {
       .finally(() => {
         setLoading(false);
       });
+  };
+
+  const handleFilterModelChange = (model: any) => {
+    const filters = model.items.map((item: any) => {
+      return {
+        field: item.field,
+        operator: item.operator,
+        value: item.value,
+      };
+    });
+    setFilterModel(filters);
   };
 
   const columns: GridColDef[] = [
@@ -163,41 +166,35 @@ function Viewer() {
         },
       }}
     >
-      <DataGrid
-        rows={records}
-        columns={columns}
-        loading={loading}
-        slots={{ toolbar: CustomToolbar }}
-        pagination
-        autoHeight
-        pageSizeOptions={[10, 25, 50, 100]}
-        initialState={{
-          pagination: {
-            paginationModel: {
-              pageSize: 10,
-            },
-          },
-        }}
-      />
-
-      <Box
-        sx={{
-          backgroundColor: "#fff",
-          borderRadius: "5px",
-          marginTop: "30px",
-          marginBottom: "30px",
-          overflow: "auto",
-          display: "grid",
-          border: "1px solid #fff",
-        }}
-      >
-        <PivotTableUI
-          data={records}
-          onChange={(s) => setPivotState(s)}
-          renderers={Object.assign({}, TableRenderers, PlotlyRenderers)}
-          {...pivotState}
-        />
-      </Box>
+      {loading ? (
+        <Box>
+          <CircularProgress />
+        </Box>
+      ) : records.length === 0 ? (
+        <Box>No records found.</Box>
+      ) : (
+        <>
+          <DataGrid
+            rows={records}
+            columns={columns}
+            loading={loading}
+            slots={{ toolbar: CustomToolbar }}
+            pagination
+            autoHeight
+            pageSizeOptions={[10, 25, 50, 100]}
+            initialState={{
+              pagination: {
+                paginationModel: {
+                  pageSize: 10,
+                },
+              },
+            }}
+            onFilterModelChange={handleFilterModelChange}
+          />
+          <ViewerChart records={records} filter={filterModel} />
+          <ViewerPivot records={records} />
+        </>
+      )}
     </Box>
   );
 }
